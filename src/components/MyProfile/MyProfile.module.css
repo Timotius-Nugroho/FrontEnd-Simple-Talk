@@ -1,0 +1,78 @@
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap");
+
+.pp {
+  border-radius: 15px;
+  width: 90px;
+  height: 90px;
+}
+
+.name {
+  border: none;
+  margin-top: -13px;
+  font-family: "Rubik", sans-serif;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 26px;
+  letter-spacing: -0.165px;
+}
+
+.name:focus {
+  box-shadow: none;
+}
+
+.section {
+  font-family: "Rubik", sans-serif;
+  font-weight: bold;
+  font-size: 19px;
+  line-height: 23px;
+}
+
+.change {
+  cursor: pointer;
+  margin-top: -10px;
+  font-family: "Rubik", sans-serif;
+  color: #7e98df;
+  font-size: 16px;
+  line-height: 19px;
+  letter-spacing: -0.17px;
+}
+
+.change:hover {
+  font-weight: bold;
+}
+
+.titleInfo {
+  margin-top: -14px;
+  font-family: "Rubik", sans-serif;
+  color: grey;
+  font-size: 14px;
+  line-height: 19px;
+  letter-spacing: -0.17px;
+}
+
+.info {
+  border: none;
+  font-family: "Rubik", sans-serif;
+  font-size: 14px;
+  font-weight: bolder;
+  line-height: 19px;
+  letter-spacing: -0.17px;
+}
+
+.info:focus {
+  box-shadow: none;
+}
+
+.setting {
+  cursor: pointer;
+}
+
+.updateImage {
+  color: transparent;
+  visibility: hidden;
+  cursor: pointer;
+}
+
+.boxUpdateImage {
+  cursor: pointer;
+}

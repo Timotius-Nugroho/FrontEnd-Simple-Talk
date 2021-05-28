@@ -1,0 +1,102 @@
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap");
+
+@media (max-width: 767.98px) {
+  .breakPoints {
+    display: none;
+  }
+
+  .inputGroup {
+    position: fixed;
+    bottom: 0;
+    width: 93%;
+  }
+}
+
+@media (min-width: 768px) {
+  .breakPoints {
+    display: inline;
+  }
+
+  .inputGroup {
+    position: fixed;
+    bottom: 0;
+    width: 62%;
+  }
+}
+
+.borderRight {
+  border-right: solid;
+  border-color: rgba(126, 152, 223, 0.4);
+}
+
+.borderLeft {
+  border-left: solid;
+  border-color: rgba(126, 152, 223, 0.4);
+}
+
+.noMsg {
+  padding-top: 350px;
+  font-family: "Rubik", sans-serif;
+  font-size: 24px;
+  line-height: 28px;
+  color: #848484;
+  font-weight: 700;
+  text-align: center;
+}
+
+.chatRoom {
+  height: 500px;
+}
+
+.pp {
+  border-radius: 15px;
+  width: 60px;
+  height: 60px;
+}
+
+.pp:hover {
+  cursor: pointer;
+}
+
+.friendName {
+  font-family: "Rubik", sans-serif;
+  margin-left: 20px;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 21px;
+  letter-spacing: -0.165px;
+}
+
+.status {
+  margin-top: -10px;
+  margin-left: 20px;
+  font-family: "Rubik", sans-serif;
+  color: #7e98df;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.roomTitle {
+  padding-top: 20px;
+  position: fixed;
+  top: 0;
+}
+
+.suplement {
+  background-color: white;
+  border: none;
+}
+
+.suplement:hover {
+  cursor: pointer;
+  background-color: rgba(132, 132, 132, 0.4);
+}
+
+.input {
+  border: none;
+  background-color: #fafafa;
+}
+
+.input:focus {
+  border-radius: 10px;
+}

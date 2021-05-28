@@ -7,28 +7,33 @@ import {
   Card,
   Image,
 } from "react-bootstrap";
-import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
-import styles from "./Login.module.css";
+import { EyeFill, EyeSlashFill, CaretLeft } from "react-bootstrap-icons";
+import styles from "./Register.module.css";
 import line from "../../../assets/img/line.png";
 import google from "../../../assets/img/googleIcon.png";
 
-function Login(props) {
+function Register(props) {
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    console.log(email, password);
-  }, [email, password]);
+    console.log("E", email, "P", password, "U", username);
+  }, [email, password, username]);
 
-  const handleLogin = (event) => {
+  const handleRegister = (event) => {
     event.preventDefault();
-    localStorage.setItem("token", email);
+    localStorage.setItem("token", username);
     props.history.push("/chat");
   };
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
+  };
+
+  const changeUsername = (event) => {
+    setUsername(event.target.value);
   };
 
   const changeEmail = (event) => {
@@ -39,12 +44,8 @@ function Login(props) {
     setPassword(event.target.value);
   };
 
-  const handleMoveRegister = () => {
-    props.history.push("/register");
-  };
-
-  const handleMoveForgetPass = () => {
-    props.history.push("/forget-password");
+  const handleMove = () => {
+    props.history.push("/login");
   };
 
   return (
@@ -55,9 +56,31 @@ function Login(props) {
           style={{ width: "28rem", borderRadius: "35px" }}
         >
           <Card.Body>
-            <p className={`text-center ${styles.title} mb-5 mt-3`}>Login</p>
-            <p className={`${styles.semi} mb-4 pb-2`}>Hi, Welcome back!</p>
-            <Form onSubmit={handleLogin}>
+            <div className="d-flex justify-content-between mb-5 mt-2">
+              <CaretLeft
+                color="#7E98DF"
+                size={30}
+                className={styles.back}
+                onClick={handleMove}
+              />
+              <p className={styles.title}>Register</p>
+              <CaretLeft color="white" />
+            </div>
+            <p className={`${styles.semi} mb-4 pb-2`}>
+              Let’s create your account!
+            </p>
+            <Form onSubmit={handleRegister}>
+              <Form.Group className="mb-5">
+                <Form.Label className={styles.label}>Name</Form.Label>
+                <Form.Control
+                  className={`${styles.input} shadow-none`}
+                  type="text"
+                  placeholder="Enter Name"
+                  value={username}
+                  onChange={(event) => changeUsername(event)}
+                  required
+                />
+              </Form.Group>
               <Form.Group className="mb-5">
                 <Form.Label className={styles.label}>Email</Form.Label>
                 <Form.Control
@@ -76,37 +99,32 @@ function Login(props) {
                     className={`${styles.input} shadow-none`}
                     type={showPassword ? "text" : "password"}
                     onChange={(event) => changePassword(event)}
-                    value={password}
                     placeholder="Password"
                     required
                   />
                   <InputGroup.Text
                     className={styles.suplement}
+                    value={password}
                     onClick={handleShowPassword}
                   >
                     {showPassword ? <EyeSlashFill /> : <EyeFill />}
                   </InputGroup.Text>
                 </InputGroup>
               </Form.Group>
-              <div className="d-flex flex-row-reverse mb-4">
-                <p className={styles.forgot} onClick={handleMoveForgetPass}>
-                  Forgot password?
-                </p>
-              </div>
               <Button
                 className={`${styles.btnLogin} mb-4`}
                 variant="primary"
                 type="submit"
               >
-                Login
+                Register
               </Button>
               <div className="d-flex flex-row mb-4 justify-content-between">
                 <Image className={styles.line} src={line} />
-                <div className={styles.spacer}>Login with</div>
+                <div className={styles.spacer}>Register with</div>
                 <Image className={styles.line} src={line} />
               </div>
               <Button
-                className={`${styles.btnGoolge} mb-5`}
+                className={`${styles.btnGoolge} mb-4`}
                 variant="outline-primary"
                 type="button"
               >
@@ -114,12 +132,6 @@ function Login(props) {
                 <span> Google</span>
               </Button>
             </Form>
-            <p className={`${styles.spacer} text-center`}>
-              Don’t have an account?{" "}
-              <span className={styles.signUp} onClick={handleMoveRegister}>
-                Sign Up
-              </span>
-            </p>
           </Card.Body>
         </Card>
       </Container>
@@ -127,4 +139,4 @@ function Login(props) {
   );
 }
 
-export default Login;
+export default Register;
