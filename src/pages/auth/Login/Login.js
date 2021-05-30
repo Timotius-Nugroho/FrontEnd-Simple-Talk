@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
   Container,
@@ -6,25 +7,42 @@ import {
   InputGroup,
   Card,
   Image,
+  Alert,
 } from "react-bootstrap";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
 import styles from "./Login.module.css";
 import line from "../../../assets/img/line.png";
 import google from "../../../assets/img/googleIcon.png";
+import { login } from "../../../redux/action/auth";
 
 function Login(props) {
+  const auth = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    console.log(email, password);
-  }, [email, password]);
+    if (auth.msg.length > 0) {
+      setShowAlert(true);
+    }
+    if (auth.data.token) {
+      setShowAlert(true);
+      localStorage.setItem("token", auth.data.token);
+      props.history.push("/chat-list");
+    }
+  }, [auth, props]);
 
   const handleLogin = (event) => {
     event.preventDefault();
-    localStorage.setItem("token", email);
-    props.history.push("/chat");
+    dispatch(
+      login({
+        userEmail: email,
+        userPassword: password,
+      })
+    );
   };
 
   const handleShowPassword = () => {
@@ -88,6 +106,13 @@ function Login(props) {
                   </InputGroup.Text>
                 </InputGroup>
               </Form.Group>
+              {showAlert ? (
+                <Alert className="text-center" variant="warning">
+                  {auth.msg}
+                </Alert>
+              ) : (
+                ""
+              )}
               <div className="d-flex flex-row-reverse mb-4">
                 <p className={styles.forgot} onClick={handleMoveForgetPass}>
                   Forgot password?

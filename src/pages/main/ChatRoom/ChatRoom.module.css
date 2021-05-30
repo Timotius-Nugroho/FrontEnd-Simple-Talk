@@ -6,6 +6,7 @@
   }
 
   .inputGroup {
+    background-color: white;
     position: fixed;
     bottom: 0;
     width: 93%;
@@ -18,6 +19,7 @@
   }
 
   .inputGroup {
+    background-color: white;
     position: fixed;
     bottom: 0;
     width: 62%;
@@ -44,8 +46,46 @@
   text-align: center;
 }
 
-.chatRoom {
-  height: 500px;
+.chatBox {
+  margin-top: 90px;
+  height: 450px;
+}
+
+.nameBubble {
+  font-size: 11px;
+  margin-bottom: -9px;
+  font-weight: 800;
+  font-style: italic;
+}
+
+.bubbleChatLeft {
+  font-family: "Rubik", sans-serif;
+  text-align: start;
+  background-color: #7e98df;
+  max-width: 50%;
+  padding: 8px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border: none;
+}
+
+.bubbleChatLeft:hover {
+  background-color: #7e98df;
+}
+
+.bubbleChatLeft:focus {
+  background-color: #7e98df;
+}
+
+.bubbleChatRight {
+  font-family: "Rubik", sans-serif;
+  text-align: end;
+  max-width: 50%;
+  padding: 8px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 
 .pp {
@@ -77,9 +117,11 @@
 }
 
 .roomTitle {
-  padding-top: 20px;
+  margin-top: 20px;
   position: fixed;
   top: 0;
+  background-color: white;
+  border-radius: 10px;
 }
 
 .suplement {

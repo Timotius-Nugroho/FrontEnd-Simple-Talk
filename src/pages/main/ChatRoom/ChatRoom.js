@@ -1,9 +1,21 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Image, InputGroup, Form } from "react-bootstrap";
+import { connect } from "react-redux";
+import { getUserById } from "../../../redux/action/user";
+import { getAllChat, addChat } from "../../../redux/action/chat";
+import {
+  Container,
+  Row,
+  Col,
+  Image,
+  InputGroup,
+  Form,
+  Button,
+  Alert,
+} from "react-bootstrap";
 import LeftSide from "../../../components/LeftSideChat/LeftSide";
 import FriendProfile from "../../../components/FriendProfile/FriendProfile";
 import styles from "./ChatRoom.module.css";
-import pp from "../../../assets/img/squid.jpg";
+import pp from "../../../assets/img/no-img.png";
 import {
   PlusLg,
   EmojiWinkFill,
@@ -13,26 +25,78 @@ import {
 
 function ChatRoom(props) {
   const [showFriendProfile, setShowFriendProfile] = useState(false);
+  const idRoom = props.match.params.id;
+  const query = new URLSearchParams(props.location.search);
+  const senderId = parseInt(query.get("sender"));
+  const receiverId = parseInt(query.get("receiver"));
+  const idOldRoom = query.get("oldRoom");
 
-  const friends = [
-    "a",
-    "b",
-    "c",
-    "d",
-    "e",
-    "f",
-    "g",
-    "h",
-    "i",
-    "j",
-    "k",
-    "l",
-    "m",
-    "w",
-    "e",
-  ];
+  const [reload, setReload] = useState(1);
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
 
-  console.log("ID ROOM", props.match.params);
+  useEffect(() => {
+    props.getUserById(receiverId);
+    props.getAllChat(idRoom).then((res) => {
+      setMessages(res.value.data.data);
+    });
+  }, [receiverId]);
+
+  useEffect(() => {
+    if (props.socket) {
+      props.socket.on("chatMessage", (dataMessage) => {
+        console.log("dari back end", dataMessage);
+        props.getAllChat(idRoom).then((res) => {
+          setMessages(res.value.data.data);
+        });
+      });
+    }
+  }, [props.socket]);
+
+  if (reload) {
+    console.log("RELOAD--Rejoin Room");
+    props.socket.emit("joinRoom", {
+      room: idRoom,
+      oldRoom: "",
+      username: props.auth.user_name,
+    });
+    setReload(0);
+  }
+
+  useEffect(() => {
+    const username = props.auth.user_name;
+    if (idRoom !== idOldRoom) {
+      console.log(`LEAVE ROOM ${idOldRoom}`);
+      props.socket.emit("joinRoom", {
+        room: idRoom,
+        oldRoom: idOldRoom,
+        username,
+      });
+    }
+  }, [idOldRoom, idRoom]);
+
+  const handleChangeText = (event) => {
+    setMessage(event.target.value);
+  };
+
+  const handleSendMessage = () => {
+    const setData = {
+      room: idRoom,
+      sender_id: senderId,
+      message,
+    };
+    props.socket.emit("roomMessage", setData);
+    props.addChat({
+      roomChat: idRoom,
+      senderId,
+      receiverId,
+      message: message,
+    });
+    setMessage("");
+  };
+
+  // console.log("messages..", messages);
+  // console.log("RECIVERID", receiverId);
 
   return (
     <>
@@ -42,29 +106,84 @@ function ChatRoom(props) {
             md={4}
             className={`${styles.borderRight} ${styles.breakPoints} p-4`}
           >
-            <LeftSide friends={friends} />
+            <LeftSide />
           </Col>
           <Col className={showFriendProfile ? styles.breakPoints : ""}>
             <div className="p-3">
-              <div className={`d-flex flex-row ${styles.roomTitle}`}>
+              <div className={`d-flex flex-row ${styles.roomTitle} shadow p-2`}>
                 <Image
-                  src={pp}
+                  src={
+                    !props.friendDetail[0]
+                      ? pp
+                      : props.friendDetail[0].user_image.length > 0
+                      ? `${process.env.REACT_APP_IMAGE_URL}${props.friendDetail[0].user_image}`
+                      : pp
+                  }
                   className={styles.pp}
                   onClick={() => {
                     setShowFriendProfile(true);
                   }}
                 />
                 <div>
-                  <p className={styles.friendName}>Friend Name</p>
-                  <p className={styles.status}>Online</p>
+                  <p className={styles.friendName}>
+                    {props.friendDetail[0]
+                      ? props.friendDetail[0].user_name
+                      : ""}
+                  </p>
+                  <p className={styles.status}>
+                    {!props.friendDetail[0]
+                      ? ""
+                      : props.friendDetail[0].user_is_online
+                      ? "Online"
+                      : "Offline"}
+                  </p>
                 </div>
               </div>
+              <div className={`overflow-auto ${styles.chatBox}`}>
+                {messages.length > 0
+                  ? messages.map((item, index) => {
+                      return (
+                        <div key={index} className="p-1">
+                          {item.sender_id === senderId ? (
+                            <Button className={`${styles.bubbleChatLeft} mb-3`}>
+                              {item.message}
+                              <p className={styles.nameBubble}>
+                                {props.auth.user_name}
+                              </p>
+                            </Button>
+                          ) : item.username === "BOT" ? (
+                            <Alert variant="warning" className="text-center">
+                              {item.alert}
+                            </Alert>
+                          ) : (
+                            <div className="d-flex flex-row-reverse">
+                              <Button
+                                className={`${styles.bubbleChatRight} mb-3`}
+                                variant="outline-secondary"
+                              >
+                                {item.message}
+                                <p className={styles.nameBubble}>
+                                  {props.friendDetail[0]
+                                    ? props.friendDetail[0].user_name
+                                    : ""}
+                                </p>
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
+                  : ""}
+                <div style={{ height: "70px" }}></div>
+              </div>
               <div>
-                <InputGroup className={`mt-5 mb-4 ${styles.inputGroup}`}>
+                <InputGroup className={`pt-2 pb-2 mb-4 ${styles.inputGroup}`}>
                   <Form.Control
                     type="text"
                     placeholder="Type your message..."
                     className={styles.input}
+                    value={message}
+                    onChange={(event) => handleChangeText(event)}
                   />
                   <InputGroup.Text className={styles.suplement}>
                     <PlusLg color="#7E98DF" size={25} />
@@ -72,7 +191,10 @@ function ChatRoom(props) {
                   <InputGroup.Text className={styles.suplement}>
                     <EmojiWinkFill color="#7E98DF" size={25} />
                   </InputGroup.Text>
-                  <InputGroup.Text className={styles.suplement}>
+                  <InputGroup.Text
+                    className={styles.suplement}
+                    onClick={handleSendMessage}
+                  >
                     <CursorFill color="#7E98DF" size={25} />
                   </InputGroup.Text>
                 </InputGroup>
@@ -87,7 +209,7 @@ function ChatRoom(props) {
               >
                 <ArrowLeftCircle color="#7E98DF" size={37} />
               </div>
-              <FriendProfile friendId={1} />
+              <FriendProfile friendId={receiverId} />
             </Col>
           ) : (
             ""
@@ -98,4 +220,14 @@ function ChatRoom(props) {
   );
 }
 
-export default ChatRoom;
+const mapStateToProps = (state) => ({
+  friendDetail: state.user.dataUser,
+  auth: state.auth.data,
+});
+const mapDispatchToProps = {
+  getUserById,
+  getAllChat,
+  addChat,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChatRoom);

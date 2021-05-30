@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch } from "react-router-dom";
 
 import { Provider } from "react-redux";
-import store from "./redux/store";
+import { PersistGate } from "redux-persist/integration/react";
+import { store, persistor } from "./redux/store";
 
 import PrivateRoute from "./helpers/PrivateRoute";
 import PublicRoute from "./helpers/PublicRoute";
@@ -36,32 +37,34 @@ function App() {
 
   return (
     <Provider store={store}>
-      <Router>
-        <Switch>
-          <PublicRoute
-            restricted={true}
-            path="/login"
-            exact
-            component={Login}
-          />
-          <PublicRoute
-            restricted={true}
-            path="/register"
-            exact
-            component={Register}
-          />
-          <PublicRoute
-            restricted={true}
-            path="/forget-password"
-            exact
-            component={ForgotPassword}
-          />
-          <PrivateRoute socket={socket} path="/chat" exact component={Chat} />
-          <PublicRoute path="/chat-list" exact component={ChatList} />
-          <PublicRoute path="/chat-room/:id" exact component={ChatRoom} />
-          <PrivateRoute path="/counter" exact component={Counter} />
-        </Switch>
-      </Router>
+      <PersistGate loading={null} persistor={persistor}>
+        <Router>
+          <Switch>
+            <PublicRoute restricted={true} path="/" exact component={Login} />
+            <PublicRoute
+              restricted={true}
+              path="/register"
+              exact
+              component={Register}
+            />
+            <PublicRoute
+              restricted={true}
+              path="/forget-password"
+              exact
+              component={ForgotPassword}
+            />
+            <PrivateRoute socket={socket} path="/chat" exact component={Chat} />
+            <PrivateRoute path="/chat-list" exact component={ChatList} />
+            <PrivateRoute
+              socket={socket}
+              path="/chat-room/:id"
+              exact
+              component={ChatRoom}
+            />
+            <PrivateRoute path="/counter" exact component={Counter} />
+          </Switch>
+        </Router>
+      </PersistGate>
     </Provider>
   );
 }

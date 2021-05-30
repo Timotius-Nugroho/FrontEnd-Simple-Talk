@@ -5,7 +5,7 @@ import { Container, Form, Row, Col } from "react-bootstrap";
 
 function Chat(props) {
   // const [username, setUsername] = useState("");
-  const username = localStorage.getItem("token");
+  const username = "SAYA";
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [room, setRoom] = useState({ new: "", old: "" });

@@ -12,7 +12,7 @@ function ForgetPassword(props) {
 
   const handleRegister = (event) => {
     event.preventDefault();
-    props.history.push("/login");
+    props.history.push("/");
   };
 
   const changeEmail = (event) => {
@@ -20,7 +20,7 @@ function ForgetPassword(props) {
   };
 
   const handleMoveLogin = () => {
-    props.history.push("/login");
+    props.history.push("/");
   };
 
   return (

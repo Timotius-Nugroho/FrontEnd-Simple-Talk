@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { register } from "../../../redux/action/auth";
 import {
   Button,
   Container,
@@ -6,6 +8,7 @@ import {
   InputGroup,
   Card,
   Image,
+  Alert,
 } from "react-bootstrap";
 import { EyeFill, EyeSlashFill, CaretLeft } from "react-bootstrap-icons";
 import styles from "./Register.module.css";
@@ -13,19 +16,34 @@ import line from "../../../assets/img/line.png";
 import google from "../../../assets/img/googleIcon.png";
 
 function Register(props) {
+  const auth = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    console.log("E", email, "P", password, "U", username);
-  }, [email, password, username]);
+    if (auth.msg.length > 0) {
+      setShowAlert(true);
+    }
+  }, [auth, props]);
 
   const handleRegister = (event) => {
     event.preventDefault();
-    localStorage.setItem("token", username);
-    props.history.push("/chat");
+    dispatch(
+      register({
+        userName: username,
+        userEmail: email,
+        userPassword: password,
+      })
+    );
+    setTimeout(() => {
+      localStorage.clear();
+      window.location.href = "/";
+    }, 2000);
   };
 
   const handleShowPassword = () => {
@@ -45,7 +63,7 @@ function Register(props) {
   };
 
   const handleMove = () => {
-    props.history.push("/login");
+    props.history.push("/");
   };
 
   return (
@@ -111,6 +129,13 @@ function Register(props) {
                   </InputGroup.Text>
                 </InputGroup>
               </Form.Group>
+              {showAlert ? (
+                <Alert className="text-center" variant="warning">
+                  {auth.msg}
+                </Alert>
+              ) : (
+                ""
+              )}
               <Button
                 className={`${styles.btnLogin} mb-4`}
                 variant="primary"

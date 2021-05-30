@@ -1,6 +1,17 @@
 import { useState, useEffect, useRef } from "react";
+import { connect } from "react-redux";
+import { getAllUser } from "../../redux/action/user";
+import { addContact, getAllContact } from "../../redux/action/contact";
+import { getRoomChat, addRoomChat } from "../../redux/action/roomChat";
 import { withRouter } from "react-router-dom";
-import { Form, InputGroup, Image, Overlay, Modal } from "react-bootstrap";
+import {
+  Form,
+  InputGroup,
+  Image,
+  Overlay,
+  Modal,
+  Alert,
+} from "react-bootstrap";
 import {
   MenuButtonWideFill,
   PlusLg,
@@ -14,32 +25,37 @@ import {
 } from "react-bootstrap-icons";
 import styles from "./LeftSide.module.css";
 import MyProfile from "../MyProfile/MyProfile";
-// import SearchFriends from "../SearchFriends/SearchFriends";
-import pp from "../../assets/img/squid.jpg";
+import pp from "../../assets/img/no-img.png";
 
 function Chat(props) {
-  const [selectedRoom, setSelectedRoom] = useState(null);
   const [showMenu, setShowMenu] = useState(false);
   const [showMyProfile, setShowMyProfile] = useState(false);
   const [showContact, setShowContact] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
+  const [showAlertModal, setShowAlertModal] = useState([false, ""]);
   const [search, setSearch] = useState("");
+  const [oldRoomId, setOldRoomId] = useState("");
   const target = useRef(null);
 
-  const friends = props.friends;
-
   useEffect(() => {
-    console.log(selectedRoom);
-  }, [selectedRoom]);
+    props.getRoomChat(props.userId);
+  }, []);
 
-  const handleSelectRoom = (roomId) => {
-    setSelectedRoom(roomId);
-    props.history.push(`/chat-room/${roomId}`);
+  const handleSelectRoom = (roomId, senderId, receiverId) => {
+    props.history.push(
+      `/chat-room/${roomId}?sender=${senderId}&receiver=${receiverId}&oldRoom=${oldRoomId}`
+    );
+    setOldRoomId(roomId);
   };
 
   const handleSearch = (event) => {
-    console.log(search);
+    // console.log(search);
     setSearch(event.target.value);
+    if (event.target.value.length > 0) {
+      props.getAllUser(event.target.value);
+    } else {
+      props.getAllUser("*^");
+    }
   };
 
   const goToSettings = () => {
@@ -50,8 +66,10 @@ function Chat(props) {
 
   const goToContacts = () => {
     console.log("Contacts");
-    setShowMenu(false);
-    setShowContact(true);
+    props.getAllContact(props.userId).then((res) => {
+      setShowMenu(false);
+      setShowContact(true);
+    });
   };
 
   const goToInvite = () => {
@@ -60,11 +78,45 @@ function Chat(props) {
     setShowInvite(true);
   };
 
+  const handleAddFriend = (friendId) => {
+    // console.log(friendId);
+    props
+      .addContact({
+        contactUserId: props.userId,
+        contactFriendId: friendId,
+      })
+      .then((res) => {
+        setShowAlertModal([true, "Succes add to contcat !"]);
+        setTimeout(() => {
+          setShowAlertModal([false, ""]);
+        }, 3000);
+      })
+      .catch((err) => {
+        setShowAlertModal([true, err.response.data.msg]);
+        setTimeout(() => {
+          setShowAlertModal([false, ""]);
+        }, 3000);
+      });
+  };
+
+  const handleMakeRoom = (userId, friendId) => {
+    props
+      .addRoomChat({ userId, friendId })
+      .then((res) => {
+        props.getRoomChat(props.userId);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // console.log("propssnyaa", props.roomChat);
+
   return (
     <>
       <Modal show={showContact}>
         <div className="p-3">
-          <div class="d-flex justify-content-between mb-3 mt-2">
+          <div className="d-flex justify-content-between mb-3 mt-2">
             <div>
               <p className={styles.modalTitle}>Search your Contacts</p>
             </div>
@@ -85,22 +137,48 @@ function Chat(props) {
               handleSearch(event);
             }}
           />
-          <div style={{ height: "200px" }}>
-            <div className={`${styles.friendChat} d-flex overflow-auto mb-2`}>
-              <div className="d-flex">
-                <Image src={pp} className={styles.pp} />
-                <div>
-                  <p className={styles.friendName}>Friend Name</p>
-                  <p className={styles.status}>Online</p>
-                </div>
-              </div>
-            </div>
+          <div style={{ height: "200px" }} className="overflow-auto">
+            {props.contact.length > 0
+              ? props.contact.map((item, index) => {
+                  return (
+                    <div
+                      className={`${styles.friendChat} d-flex overflow-auto mb-2`}
+                      key={index}
+                      onClick={() => {
+                        handleMakeRoom(
+                          item.contact_user_id,
+                          item.contact_friend_id
+                        );
+                      }}
+                    >
+                      <div className="d-flex">
+                        <Image
+                          src={
+                            item.detail.user_image.length > 0
+                              ? `${process.env.REACT_APP_IMAGE_URL}${item.detail.user_image}`
+                              : pp
+                          }
+                          className={styles.pp}
+                        />
+                        <div>
+                          <p className={styles.friendName}>
+                            {item.detail.user_name}
+                          </p>
+                          <p className={styles.status}>
+                            {item.detail.user_is_online ? "Online" : "Offline"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              : ""}
           </div>
         </div>
       </Modal>
       <Modal show={showInvite}>
         <div className="p-3">
-          <div class="d-flex justify-content-between mb-3 mt-2">
+          <div className="d-flex justify-content-between mb-3 mt-2">
             <div>
               <p className={styles.modalTitle}>Add new friends</p>
             </div>
@@ -112,6 +190,13 @@ function Chat(props) {
               <XSquare size={30} />
             </div>
           </div>
+          {showAlertModal[0] ? (
+            <Alert className="text-center" variant="warning">
+              {showAlertModal[1]}
+            </Alert>
+          ) : (
+            ""
+          )}
           <Form.Control
             type="text"
             placeholder="Type here..."
@@ -121,19 +206,36 @@ function Chat(props) {
               handleSearch(event);
             }}
           />
-          <div style={{ height: "200px" }}>
-            <div
-              className={`${styles.friendChat} d-flex justify-content-between overflow-auto mb-2`}
-            >
-              <div className="d-flex">
-                <Image src={pp} className={styles.pp} />
-                <div>
-                  <p className={styles.friendName}>Friend Name</p>
-                  <p className={styles.status}>email@email</p>
-                </div>
-              </div>
-              <PersonPlus size={30} />
-            </div>
+          <div style={{ height: "200px" }} className="overflow-auto">
+            {props.allUser.length > 0
+              ? props.allUser.map((item, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className={`${styles.friendChat} d-flex justify-content-between overflow-auto mb-2`}
+                      onClick={() => {
+                        handleAddFriend(item.user_id);
+                      }}
+                    >
+                      <div className="d-flex">
+                        <Image
+                          src={
+                            item.user_image.length > 0
+                              ? `${process.env.REACT_APP_IMAGE_URL}${item.user_image}`
+                              : pp
+                          }
+                          className={styles.pp}
+                        />
+                        <div>
+                          <p className={styles.friendName}>{item.user_name}</p>
+                          <p className={styles.status}>{item.user_email}</p>
+                        </div>
+                      </div>
+                      <PersonPlus size={30} />
+                    </div>
+                  );
+                })
+              : ""}
           </div>
         </div>
       </Modal>
@@ -205,25 +307,54 @@ function Chat(props) {
             </InputGroup.Text>
           </InputGroup>
           <div className={`${styles.friendList} overflow-auto`}>
-            {friends.map((item, index) => {
+            {props.roomChat.map((item, index) => {
               return (
                 <div
                   key={index}
                   className={`${styles.friendChat} d-flex justify-content-between overflow-auto mb-2`}
                   onClick={() => {
-                    handleSelectRoom(item);
+                    handleSelectRoom(
+                      item.room_chat,
+                      item.user_id,
+                      item.friend_id
+                    );
                   }}
                 >
                   <div className="d-flex">
-                    <Image src={pp} className={styles.pp} />
+                    <Image
+                      src={
+                        item.friendDetail.user_image.length > 0
+                          ? `${process.env.REACT_APP_IMAGE_URL}${item.friendDetail.user_image}`
+                          : pp
+                      }
+                      className={styles.pp}
+                    />
                     <div>
-                      <p className={styles.friendName}>Friend Name</p>
-                      <p className={styles.friendMsg}>messagsssss sssssss</p>
+                      <p className={styles.friendName}>
+                        {item.friendDetail.user_name}
+                      </p>
+                      {item.sampleChat[0] ? (
+                        <p className={styles.friendMsg}>
+                          {item.sampleChat[0].message}
+                        </p>
+                      ) : (
+                        <p className={styles.friendMsg}>
+                          <i>No message yet</i>
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div>
-                    <p className={styles.time}>20:30</p>
-                    <div className={styles.unread}>22</div>
+                    {item.sampleChat[0] ? (
+                      <p className={styles.time}>
+                        {item.sampleChat[0].created_at
+                          .split("T")[1]
+                          .slice(0, 5)}
+                      </p>
+                    ) : (
+                      ""
+                    )}
+                    {/* <div className={styles.unread}>22</div> */}
                   </div>
                 </div>
               );
@@ -235,4 +366,18 @@ function Chat(props) {
   );
 }
 
-export default withRouter(Chat);
+const mapStateToProps = (state) => ({
+  userId: state.auth.data.user_id,
+  allUser: state.user.dataAllUser,
+  contact: state.contact.data,
+  roomChat: state.roomChat.data,
+});
+const mapDispatchToProps = {
+  getAllUser,
+  addContact,
+  getAllContact,
+  getRoomChat,
+  addRoomChat,
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Chat));
