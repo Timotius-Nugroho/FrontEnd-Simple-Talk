@@ -249,7 +249,7 @@ function Chat(props) {
       ) : (
         <div>
           <div className="d-flex justify-content-between mt-4">
-            <h1 className={styles.title}>Telegram</h1>
+            <h1 className={styles.title}>Simple talk</h1>
             <MenuButtonWideFill
               color="royalblue"
               size={29}

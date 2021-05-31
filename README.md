@@ -1,70 +1,51 @@
-# Getting Started with Create React App
+<h1 align='center'>React JS - Simple Talk Front-End</h1>
+  <p align="center">
+    <a href="link_deploy">View Demo</a>
+    ·
+    <a href="https://github.com/Timotius-NugrohoFrontEnd-Simple-Talk/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/Timotius-Nugroho/FrontEnd-Simple-Talk/pulls">Request Feature</a>
+  </p>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![Image Banner](src/assets/img/bannerREADME.png)
 
-## Available Scripts
+## About The Project
 
-In the project directory, you can run:
+Simple talk is a chat application that can connect everyone in the world very easily. Simple talk is a dynamic and responsive application with the user's device.
 
-### `yarn start`
+## Built With
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+[![React](https://img.shields.io/badge/React-v17.0.2-blue)](https://github.com/facebook/react)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-v4.6.x-blue)](https://github.com/react-bootstrap/react-bootstrap)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Requirements
 
-### `yarn test`
+1. <a href="https://nodejs.org/en/download/">Node Js</a>
+2. Node_modules `npm install` or `yarn install`
+3. Backend API : Simple talk - backEnd [`here`](https://github.com/Timotius-Nugroho/BackEnd-Simple-Talk)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting Started
 
-### `yarn build`
+1. Download this Project or you can type `git clone #link_git`
+2. Open app's directory in CMD or Terminal
+3. Type `npm install` or `yarn install`
+4. Add .env file at root folder project
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```sh
+REACT_APP_BASE_URL = [Backend API]
+REACT_APP_IMAGE_URL = [for calling image from server]
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+5. Type `npm start`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Acknowledgements
 
-### `yarn eject`
+- [Axios](https://www.npmjs.com/package/axios)
+- [Redux](https://redux.js.org/)
+- [React](https://reactjs.org/)
+- [React Bootstrap](https://react-bootstrap.github.io/)
+- [Socket](https://socket.io/)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## License
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+© [Timotius Nugroho](https://github.com/Timotius-Nugroho/)
