@@ -7,7 +7,7 @@
     <a href="https://github.com/Timotius-Nugroho/FrontEnd-Simple-Talk/pulls">Request Feature</a>
   </p>
 
-![Image Banner](src/assets/img/bannerREADME.png)
+![Image Banner](bannerREADME.png)
 
 ## About The Project
 
