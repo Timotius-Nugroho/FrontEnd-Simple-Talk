@@ -85,13 +85,16 @@ function ChatRoom(props) {
       sender_id: senderId,
       message,
     };
-    props.socket.emit("roomMessage", setData);
-    props.addChat({
-      roomChat: idRoom,
-      senderId,
-      receiverId,
-      message: message,
-    });
+    props
+      .addChat({
+        roomChat: idRoom,
+        senderId,
+        receiverId,
+        message: message,
+      })
+      .then((res) => {
+        props.socket.emit("roomMessage", setData);
+      });
     setMessage("");
   };
 
