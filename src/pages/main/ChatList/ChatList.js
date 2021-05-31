@@ -8,7 +8,7 @@ function Chat(props) {
     <>
       <Container fluid>
         <Row>
-          <Col className={`${styles.border}  p-4`}>
+          <Col md={4} className={`${styles.border}  p-4`}>
             <LeftSide />
           </Col>
           <Col sm={8} className={styles.breakPoints}>

@@ -6,6 +6,11 @@
   height: 90px;
 }
 
+.setHeight {
+  height: 450px;
+  overflow-y: auto;
+}
+
 .name {
   border: none;
   margin-top: -13px;
@@ -41,6 +46,9 @@
   font-size: 14px;
   line-height: 19px;
   letter-spacing: -0.17px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
 }
 
 .btDesc {
@@ -50,6 +58,9 @@
   border-radius: 20px;
   font-size: 10px;
   font-weight: bold;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
 }
 
 .btDesc:active {

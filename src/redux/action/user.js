@@ -14,9 +14,23 @@ export const getUserById = (id) => {
   };
 };
 
+export const getUserByIdNoState = (id) => {
+  return {
+    type: "GET_USER_BY_ID_NO_STATE",
+    payload: axiosApiIntances.get(`user/by-id/${id}`),
+  };
+};
+
 export const updateUser = (id, data) => {
   return {
     type: "UPDATE_USER",
     payload: axiosApiIntances.patch(`user/${id}`, data),
+  };
+};
+
+export const changePasswordUser = (data) => {
+  return {
+    type: "CHANGE_PASSWORD_USER",
+    payload: axiosApiIntances.patch("user/change/password", data),
   };
 };

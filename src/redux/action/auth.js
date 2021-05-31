@@ -20,3 +20,10 @@ export const logout = (id) => {
     payload: axiosApiIntances.post(`auth/logout/${id}`),
   };
 };
+
+export const forgotPassword = (data) => {
+  return {
+    type: "FORGOT_PASSWORD",
+    payload: axiosApiIntances.post("auth/request-change-password", data),
+  };
+};

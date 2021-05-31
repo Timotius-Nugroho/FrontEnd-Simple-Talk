@@ -1,29 +1,39 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { getUserById, updateUser } from "../../redux/action/user";
+import {
+  getUserByIdNoState,
+  updateUser,
+  changePasswordUser,
+} from "../../redux/action/user";
 import { logout } from "../../redux/action/auth";
-import { Form, Image } from "react-bootstrap";
+import { Form, Image, Modal, Row, Col, Button, Alert } from "react-bootstrap";
 import styles from "./MyProfile.module.css";
-import { ShieldLock, DoorOpen } from "react-bootstrap-icons";
+import { ShieldLock, DoorOpen, XSquare } from "react-bootstrap-icons";
 import dummyPp from "../../assets/img/no-img.png";
 
 function MyProfile(props) {
   const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
   const [userPhone, setUserPhone] = useState("");
   const [userBio, setUserBio] = useState("");
   const [photoProfile, setPhotoProfile] = useState("");
-  const [userImage, setUserImage] = useState(undefined);
+  const [userImage, setUserImage] = useState(null);
   const [showInput, setShowInput] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showAlert, setShowAlert] = useState([false, ""]);
   const [isUpdate, setIsUpdate] = useState([false, "Tap to make changes"]);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
   useEffect(() => {
     getAndSetData();
-    console.log("did mount");
   }, []);
 
   const getAndSetData = () => {
-    props.getUserById(props.userId).then((res) => {
+    props.getUserByIdNoState(props.userId).then((res) => {
       setUserName(res.value.data.data[0].user_name);
+      setUserEmail(res.value.data.data[0].user_email);
       setUserPhone(res.value.data.data[0].user_phone);
       setUserBio(res.value.data.data[0].user_bio);
       setPhotoProfile(
@@ -41,7 +51,7 @@ function MyProfile(props) {
       setPhotoProfile(
         `${process.env.REACT_APP_IMAGE_URL}${props.user.user_image}`
       );
-      setUserImage(undefined);
+      setUserImage(null);
     }
   };
 
@@ -52,10 +62,13 @@ function MyProfile(props) {
       formData.append("userName", userName);
       formData.append("userPhone", userPhone);
       formData.append("userBio", userBio);
-      formData.append("image", userImage);
-      for (var pair of formData.entries()) {
-        console.log(pair[0] + ", " + pair[1]);
+      if (userImage) {
+        formData.append("image", userImage);
       }
+
+      // for (var pair of formData.entries()) {
+      //   console.log(pair[0] + ", " + pair[1]);
+      // }
       props.updateUser(props.userId, formData).then((res) => {
         getAndSetData();
       });
@@ -71,12 +84,95 @@ function MyProfile(props) {
     });
   };
 
+  const handleSubmitPassword = (event) => {
+    event.preventDefault();
+    if (newPassword === confirmNewPassword) {
+      props.changePasswordUser({ userPassword: newPassword }).then((res) => {
+        setShowAlert([true, "Succes change password"]);
+        setTimeout(() => {
+          setShowAlert([false, ""]);
+          setShowModal(false);
+          setNewPassword("");
+          setConfirmNewPassword("");
+        }, 1000);
+      });
+    } else {
+      setShowAlert([true, "Please check your confirm password !"]);
+      setNewPassword("");
+      setConfirmNewPassword("");
+      setTimeout(() => {
+        setShowAlert([false, ""]);
+      }, 1000);
+    }
+  };
+
   // console.log("propssnya", props);
   // console.log("dari auth", props.userId);
-  console.log("SET FOTO", photoProfile);
 
   return (
     <>
+      <Modal show={showModal}>
+        <div className="p-3">
+          <div className="d-flex justify-content-between mb-3 mt-2">
+            <div>
+              <p className={styles.modalTitle}>Change your Password</p>
+            </div>
+            <div
+              onClick={() => {
+                setShowModal(false);
+              }}
+            >
+              <XSquare size={30} />
+            </div>
+          </div>
+          <Form onSubmit={handleSubmitPassword}>
+            <Form.Group as={Row} className="mb-3">
+              <Form.Label column sm="4" className={styles.info}>
+                Password
+              </Form.Label>
+              <Col sm="8">
+                <Form.Control
+                  type="password"
+                  placeholder="Input new password"
+                  value={newPassword}
+                  onChange={(event) => setNewPassword(event.target.value)}
+                  required
+                />
+              </Col>
+            </Form.Group>
+            <Form.Group as={Row} className="mb-3">
+              <Form.Label column sm="4" className={styles.info}>
+                Confirm Password
+              </Form.Label>
+              <Col sm="8">
+                <Form.Control
+                  type="password"
+                  placeholder="Confirm new password"
+                  value={confirmNewPassword}
+                  onChange={(event) =>
+                    setConfirmNewPassword(event.target.value)
+                  }
+                  required
+                />
+              </Col>
+            </Form.Group>
+            {showAlert[0] ? (
+              <Alert variant="warning" className="text-center">
+                {showAlert[1]}
+              </Alert>
+            ) : (
+              ""
+            )}
+            <Button
+              variant="primary"
+              type="submit"
+              style={{ backgroundColor: "#7e98df" }}
+            >
+              Submit
+            </Button>
+          </Form>
+        </div>
+      </Modal>
       <Form.Group style={{ textAlign: "center" }}>
         <Form.Label htmlFor="files" className={styles.boxUpdateImage}>
           <Image
@@ -91,10 +187,12 @@ function MyProfile(props) {
         <Form.Control
           type="file"
           id="files"
-          onChange={(event) => handleImage(event)}
           className={styles.updateImage}
+          onChange={(event) => handleImage(event)}
         />
       </Form.Group>
+
+      <p className={`${styles.email} text-center`}>{userEmail}</p>
 
       {showInput ? (
         <Form.Control
@@ -140,9 +238,9 @@ function MyProfile(props) {
         <p className={styles.info}>{userBio}</p>
       )}
 
-      <p className={`${styles.titleInfo} mb-5`}>Bio</p>
+      <p className={`${styles.titleInfo} mb-3`}>Bio</p>
       <p className={`${styles.section} mb-4`}>Settings</p>
-      <div className={styles.setting}>
+      <div className={styles.setting} onClick={() => setShowModal(true)}>
         <ShieldLock size={23} />
         <span className="p-2">Change password</span>
       </div>
@@ -158,6 +256,11 @@ const mapStateToProps = (state) => ({
   userId: state.auth.data.user_id,
   user: state.user.dataUser[0],
 });
-const mapDispatchToProps = { getUserById, updateUser, logout };
+const mapDispatchToProps = {
+  getUserByIdNoState,
+  updateUser,
+  changePasswordUser,
+  logout,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyProfile);

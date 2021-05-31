@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { getAllUser } from "../../redux/action/user";
@@ -106,7 +107,10 @@ function Chat(props) {
         props.getRoomChat(props.userId);
       })
       .catch((err) => {
-        console.log(err);
+        setShowAlertModal([true, err.response.data.msg]);
+        setTimeout(() => {
+          setShowAlertModal([false, ""]);
+        }, 2000);
       });
   };
 
@@ -128,15 +132,13 @@ function Chat(props) {
               <XSquare size={30} />
             </div>
           </div>
-          <Form.Control
-            type="text"
-            placeholder="Type here..."
-            className="mb-3"
-            value={search}
-            onChange={(event) => {
-              handleSearch(event);
-            }}
-          />
+          {showAlertModal[0] ? (
+            <Alert className="text-center" variant="warning">
+              {showAlertModal[1]}
+            </Alert>
+          ) : (
+            ""
+          )}
           <div style={{ height: "200px" }} className="overflow-auto">
             {props.contact.length > 0
               ? props.contact.map((item, index) => {

@@ -4,12 +4,8 @@
   .breakPoints {
     display: none;
   }
-
-  .inputGroup {
-    background-color: white;
-    position: fixed;
-    bottom: 0;
-    width: 93%;
+  .breakPointsReverse {
+    display: inline;
   }
 }
 
@@ -17,13 +13,26 @@
   .breakPoints {
     display: inline;
   }
-
-  .inputGroup {
-    background-color: white;
-    position: fixed;
-    bottom: 0;
-    width: 62%;
+  .breakPointsReverse {
+    display: none;
   }
+}
+
+.notif {
+  position: fixed;
+  background-color: rgba(178, 191, 224, 0.4);
+  width: 200px;
+  top: 0;
+  right: 0;
+  margin-top: 8px;
+  margin-right: 8px;
+  border-radius: 10px;
+}
+
+.warp {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
 }
 
 .borderRight {
@@ -47,8 +56,7 @@
 }
 
 .chatBox {
-  margin-top: 90px;
-  height: 450px;
+  height: 400px;
 }
 
 .nameBubble {
@@ -117,9 +125,6 @@
 }
 
 .roomTitle {
-  margin-top: 20px;
-  position: fixed;
-  top: 0;
   background-color: white;
   border-radius: 10px;
 }
