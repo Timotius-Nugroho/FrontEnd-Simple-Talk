@@ -28,6 +28,13 @@ export const updateUser = (id, data) => {
   };
 };
 
+export const deletePhotoUser = (id) => {
+  return {
+    type: "DELETE_PHOTO_USER",
+    payload: axiosApiIntances.patch(`user/delete-photo/${id}`),
+  };
+};
+
 export const changePasswordUser = (data) => {
   return {
     type: "CHANGE_PASSWORD_USER",

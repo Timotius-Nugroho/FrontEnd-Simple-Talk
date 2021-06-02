@@ -53,8 +53,23 @@
   letter-spacing: -0.17px;
 }
 
+.deletePhoto {
+  cursor: pointer;
+  margin-top: -18px;
+  font-family: "Rubik", sans-serif;
+  color: red;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 19px;
+  letter-spacing: -0.17px;
+}
+
 .change:hover {
   font-weight: bold;
+}
+
+.deletePhoto:hover {
+  color: rgb(48, 12, 12);
 }
 
 .titleInfo {

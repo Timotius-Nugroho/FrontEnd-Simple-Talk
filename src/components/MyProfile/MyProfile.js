@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import {
   getUserByIdNoState,
   updateUser,
+  deletePhotoUser,
   changePasswordUser,
 } from "../../redux/action/user";
 import { logout } from "../../redux/action/auth";
@@ -69,13 +70,45 @@ function MyProfile(props) {
       // for (var pair of formData.entries()) {
       //   console.log(pair[0] + ", " + pair[1]);
       // }
-      props.updateUser(props.userId, formData).then((res) => {
-        getAndSetData();
-      });
+      props
+        .updateUser(props.userId, formData)
+        .then((res) => {
+          setShowAlert([true, res.value.data.msg]);
+          getAndSetData();
+          setTimeout(() => {
+            setShowAlert([false, ""]);
+          }, 3000);
+        })
+        .catch((err) => {
+          setShowAlert([true, err.response.data.msg]);
+          getAndSetData();
+          setTimeout(() => {
+            setShowAlert([false, ""]);
+          }, 3000);
+        });
       setIsUpdate([false, "Tap to make changes"]);
     } else {
       setIsUpdate([true, "Tap to update your profile"]);
     }
+  };
+
+  const handleDeletePhoto = () => {
+    props
+      .deletePhotoUser(props.userId)
+      .then((res) => {
+        setShowAlert([true, res.value.data.msg]);
+        getAndSetData();
+        setTimeout(() => {
+          setShowAlert([false, ""]);
+        }, 3000);
+      })
+      .catch((err) => {
+        setShowAlert([true, err.response.data.msg]);
+        setTimeout(() => {
+          setShowAlert([false, ""]);
+          getAndSetData();
+        }, 3000);
+      });
   };
 
   const handleLogout = () => {
@@ -173,6 +206,13 @@ function MyProfile(props) {
           </Form>
         </div>
       </Modal>
+      {showAlert[0] ? (
+        <Alert variant="warning" className="text-center">
+          {showAlert[1]}
+        </Alert>
+      ) : (
+        ""
+      )}
       <Form.Group style={{ textAlign: "center" }}>
         <Form.Label htmlFor="files" className={styles.boxUpdateImage}>
           <Image
@@ -211,6 +251,12 @@ function MyProfile(props) {
         onClick={() => handleUpdate()}
       >
         {isUpdate[1]}
+      </p>
+      <p
+        className={`${styles.deletePhoto} mb-4 text-center`}
+        onClick={() => handleDeletePhoto()}
+      >
+        Delete photo profile
       </p>
       <p className={`${styles.section} mb-4`}>Account</p>
       {showInput ? (
@@ -259,6 +305,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
   getUserByIdNoState,
   updateUser,
+  deletePhotoUser,
   changePasswordUser,
   logout,
 };
