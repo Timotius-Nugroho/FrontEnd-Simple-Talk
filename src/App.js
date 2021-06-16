@@ -22,9 +22,12 @@ import io from "socket.io-client";
 function App() {
   const [socket, setSocket] = useState(null);
   const setupSocket = () => {
-    const newSocket = io.connect("http://localhost:3003", {
-      path: "/backend3/socket.io",
-    });
+    const newSocket = io.connect(
+      "https://pacific-bastion-76713.herokuapp.com",
+      {
+        path: "/backend3/socket.io",
+      }
+    );
     newSocket.on("connect", () => {
       console.log("Connected Socket Client !");
     });
