@@ -70,8 +70,8 @@ function Register(props) {
     <>
       <Container>
         <Card
-          className="mt-5 mx-auto p-4 mb-5 shadow"
-          style={{ width: "28rem", borderRadius: "35px" }}
+          className={`mt-5 mx-auto p-4 mb-5 shadow ${styles.cardBox}`}
+          style={{ borderRadius: "35px" }}
         >
           <Card.Body>
             <div className="d-flex justify-content-between mb-5 mt-2">

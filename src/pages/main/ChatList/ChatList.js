@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Container, Row, Col } from "react-bootstrap";
+import { getRoomChat } from "../../../redux/action/roomChat";
 import LeftSide from "../../../components/LeftSideChat/LeftSide";
 import styles from "./ChatList.module.css";
 import { Bell, XOctagon } from "react-bootstrap-icons";
@@ -21,6 +22,7 @@ function Chat(props) {
     if (props.socket) {
       props.socket.on("notifMessage", (data) => {
         setShowNotif([true, data.username, data.message]);
+        props.getRoomChat(props.userId);
         setTimeout(() => {
           setShowNotif([false, "", ""]);
         }, 3000);
@@ -75,5 +77,8 @@ function Chat(props) {
 const mapStateToProps = (state) => ({
   userId: state.auth.data.user_id,
 });
+const mapDispatchToProps = {
+  getRoomChat,
+};
 
-export default connect(mapStateToProps)(Chat);
+export default connect(mapStateToProps, mapDispatchToProps)(Chat);
