@@ -35,11 +35,21 @@ function ChatRoom(props) {
   const idOldRoom = query.get("oldRoom");
 
   const [reload, setReload] = useState(1);
+  const [isOnline, setIsOnline] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [showNotif, setShowNotif] = useState([false, "", ""]);
 
   const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    // join private room
+    props.socket.emit("joinRoom", {
+      room: `${props.auth.user_id}`,
+      oldRoom: "",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
@@ -55,17 +65,39 @@ function ChatRoom(props) {
 
   useEffect(() => {
     if (props.socket) {
-      props.socket.on("chatMessage", (dataMessage) => {
-        console.log("dari back end", dataMessage);
-        if (dataMessage.sender_id === receiverId) {
-          setShowNotif([true, dataMessage.username, dataMessage.message]);
+      props.socket.on("chatMessage", () => {
+        props
+          .getAllChat(idRoom)
+          .then((res) => {
+            setMessages(res.value.data.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      });
+
+      props.socket.on("isOnline", (data) => {
+        setIsOnline(data);
+      });
+
+      props.socket.on("logout", (data) => {
+        if (data === receiverId) {
+          setIsOnline(false);
         }
+      });
+
+      props.socket.on("login", (data) => {
+        if (data === receiverId) {
+          setIsOnline(true);
+        }
+      });
+
+      props.socket.on("notifMessage", (data) => {
+        // console.log("notif", data);
+        setShowNotif([true, data.username, data.message]);
         setTimeout(() => {
           setShowNotif([false, "", ""]);
         }, 3000);
-        props.getAllChat(idRoom).then((res) => {
-          setMessages(res.value.data.data);
-        });
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -78,6 +110,7 @@ function ChatRoom(props) {
       oldRoom: "",
       username: props.auth.user_name,
     });
+    // props.socket.emit("connectServer", props.auth.user_id);
     setReload(0);
   }
 
@@ -89,6 +122,10 @@ function ChatRoom(props) {
         room: idRoom,
         oldRoom: idOldRoom,
         username,
+      });
+      props.socket.emit("checkUserOnline", {
+        userId: receiverId,
+        room: idRoom,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -115,12 +152,25 @@ function ChatRoom(props) {
       })
       .then((res) => {
         props.socket.emit("roomMessage", setData);
+        props.socket.emit("notifMessage", {
+          username: props.auth.user_name,
+          receiverId,
+          message,
+        });
       });
     setMessage("");
   };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleMoveToChatList = () => {
+    props.socket.emit("joinRoom", {
+      room: "",
+      oldRoom: idRoom,
+    });
+    props.history.push("/chat-list");
   };
 
   // console.log("messages..", messages);
@@ -157,7 +207,7 @@ function ChatRoom(props) {
             md={4}
             className={`${styles.borderRight} ${styles.breakPoints} p-4`}
           >
-            <LeftSide />
+            <LeftSide socket={props.socket} />
           </Col>
           <Col className={showFriendProfile ? styles.breakPoints : ""}>
             <div className="p-3">
@@ -185,11 +235,7 @@ function ChatRoom(props) {
                         : ""}
                     </p>
                     <p className={styles.status}>
-                      {!props.friendDetail[0]
-                        ? ""
-                        : props.friendDetail[0].user_is_online
-                        ? "Online"
-                        : "Offline"}
+                      {isOnline ? "Online" : "Offline"}
                     </p>
                   </div>
                 </div>
@@ -199,7 +245,7 @@ function ChatRoom(props) {
                     size={30}
                     className={`${styles.breakPointsReverse} mt-3`}
                     style={{ cursor: "pointer" }}
-                    onClick={() => props.history.push("/chat-list")}
+                    onClick={() => handleMoveToChatList()}
                   />
                 </div>
               </div>

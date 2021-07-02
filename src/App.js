@@ -12,22 +12,17 @@ import Login from "./pages/auth/Login/Login";
 import Register from "./pages/auth/Register/Register";
 import ForgotPassword from "./pages/auth/ForgotPassword/ForgotPassword";
 
-import Chat from "./pages/main/Chat/Chat";
 import ChatList from "./pages/main/ChatList/ChatList";
 import ChatRoom from "./pages/main/ChatRoom/ChatRoom";
-import Counter from "./pages/main/Counter/CounterFunctional";
 
 import io from "socket.io-client";
 
 function App() {
   const [socket, setSocket] = useState(null);
   const setupSocket = () => {
-    const newSocket = io.connect(
-      "https://pacific-bastion-76713.herokuapp.com",
-      {
-        path: "/backend3/socket.io",
-      }
-    );
+    const newSocket = io.connect(`${process.env.REACT_APP_SOCKET_URL}`, {
+      path: "/backend3/socket.io",
+    });
     newSocket.on("connect", () => {
       console.log("Connected Socket Client !");
     });
@@ -56,15 +51,18 @@ function App() {
               exact
               component={ForgotPassword}
             />
-            <PrivateRoute socket={socket} path="/chat" exact component={Chat} />
-            <PrivateRoute path="/chat-list" exact component={ChatList} />
+            <PrivateRoute
+              socket={socket}
+              path="/chat-list"
+              exact
+              component={ChatList}
+            />
             <PrivateRoute
               socket={socket}
               path="/chat-room/:id"
               exact
               component={ChatRoom}
             />
-            <PrivateRoute path="/counter" exact component={Counter} />
           </Switch>
         </Router>
       </PersistGate>

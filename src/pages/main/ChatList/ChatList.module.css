@@ -31,6 +31,23 @@
   height: 500px;
 }
 
+.notif {
+  position: fixed;
+  background-color: rgba(178, 191, 224, 0.4);
+  width: 200px;
+  top: 0;
+  right: 0;
+  margin-top: 8px;
+  margin-right: 8px;
+  border-radius: 10px;
+}
+
+.warp {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
 ::-webkit-scrollbar {
   width: 5px !important;
   height: 5px !important;

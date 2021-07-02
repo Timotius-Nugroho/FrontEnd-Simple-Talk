@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
+import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import {
   getUserByIdNoState,
@@ -14,6 +15,8 @@ import { ShieldLock, DoorOpen, XSquare } from "react-bootstrap-icons";
 import dummyPp from "../../assets/img/no-img.png";
 
 function MyProfile(props) {
+  const idRoom = props.match.params.id;
+  // console.log("props profile", props, "idRoom", idRoom);
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [userPhone, setUserPhone] = useState("");
@@ -113,7 +116,11 @@ function MyProfile(props) {
 
   const handleLogout = () => {
     props.logout(props.userId).then((res) => {
-      getAndSetData();
+      props.socket.emit("disconnectServer", {
+        userId: props.userId,
+        room: idRoom ? idRoom : "",
+      });
+      props.history.push("/");
     });
   };
 
@@ -213,7 +220,7 @@ function MyProfile(props) {
       ) : (
         ""
       )}
-      <Form.Group style={{ textAlign: "center" }}>
+      <Form.Group className="text-center">
         <Form.Label htmlFor="files" className={styles.boxUpdateImage}>
           <Image
             src={
@@ -224,6 +231,12 @@ function MyProfile(props) {
             className={styles.pp}
           />
         </Form.Label>
+        <div
+          className={`${styles.email} text-center`}
+          style={{ marginBottom: "-10px", marginTop: "-5px" }}
+        >
+          {userEmail}
+        </div>
         <Form.Control
           type="file"
           id="files"
@@ -231,8 +244,6 @@ function MyProfile(props) {
           onChange={(event) => handleImage(event)}
         />
       </Form.Group>
-
-      <p className={`${styles.email} text-center`}>{userEmail}</p>
 
       {showInput ? (
         <Form.Control
@@ -310,4 +321,6 @@ const mapDispatchToProps = {
   logout,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MyProfile);
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(MyProfile)
+);

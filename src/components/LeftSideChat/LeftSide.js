@@ -246,7 +246,7 @@ function Chat(props) {
           <div className="mt-2 mb-4" onClick={() => setShowMyProfile(false)}>
             <ArrowLeftCircle color="#7E98DF" size={37} />
           </div>
-          <MyProfile />
+          <MyProfile socket={props.socket} />
         </div>
       ) : (
         <div>
