@@ -1,6 +1,6 @@
 <h1 align='center'>React JS - Simple Talk Front-End</h1>
   <p align="center">
-    <a href="link_deploy">View Demo</a>
+    <a href="https://simple-talk.netlify.app">View Demo</a>
     ·
     <a href="https://github.com/Timotius-NugrohoFrontEnd-Simple-Talk/issues">Report Bug</a>
     ·
@@ -34,6 +34,7 @@ Simple talk is a chat application that can connect everyone in the world very ea
 ```sh
 REACT_APP_BASE_URL = [Backend API]
 REACT_APP_IMAGE_URL = [for calling image from server]
+REACT_APP_SOCKET_URL = [Socket.io URL]
 ```
 
 5. Type `npm start`
