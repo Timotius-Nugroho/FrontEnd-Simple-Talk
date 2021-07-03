@@ -318,18 +318,20 @@ function ChatRoom(props) {
                       );
                     })
                   : ""}
-                {isTyping ? (
-                  <div>
-                    <Spinner animation="grow" size="sm" />
-                    <span className={styles.typing}>
-                      <em>{userTyping} is typing...</em>
-                    </span>
-                  </div>
-                ) : (
-                  ""
-                )}
               </div>
               <div>
+                <div style={{ height: "20px" }}>
+                  {isTyping ? (
+                    <div>
+                      <Spinner animation="grow" size="sm" />
+                      <span className={styles.typing}>
+                        <em>{userTyping} is typing...</em>
+                      </span>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
                 <Form onSubmit={handleSendMessage}>
                   <InputGroup className="pt-2 pb-2">
                     <Form.Control

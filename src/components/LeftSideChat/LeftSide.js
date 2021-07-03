@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
+import moment from "moment";
 import { connect } from "react-redux";
 import { getAllUser } from "../../redux/action/user";
 import { addContact, getAllContact } from "../../redux/action/contact";
@@ -201,7 +202,7 @@ function Chat(props) {
           )}
           <Form.Control
             type="text"
-            placeholder="Type here..."
+            placeholder="Find your friend's email here..."
             className="mb-3"
             value={search}
             onChange={(event) => {
@@ -304,7 +305,12 @@ function Chat(props) {
               placeholder="Type your message..."
               className={styles.input}
             />
-            <InputGroup.Text className={styles.suplement}>
+            <InputGroup.Text
+              className={styles.suplement}
+              onClick={() => {
+                goToContacts();
+              }}
+            >
               <PlusLg color="#7E98DF" />
             </InputGroup.Text>
           </InputGroup>
@@ -349,9 +355,7 @@ function Chat(props) {
                   <div>
                     {item.sampleChat[0] ? (
                       <p className={styles.time}>
-                        {item.sampleChat[0].created_at
-                          .split("T")[1]
-                          .slice(0, 5)}
+                        {moment(item.sampleChat[0].created_at).format("LT")}
                       </p>
                     ) : (
                       ""
