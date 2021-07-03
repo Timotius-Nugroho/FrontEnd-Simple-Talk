@@ -11,6 +11,7 @@ import {
   Form,
   Button,
   Alert,
+  Spinner,
 } from "react-bootstrap";
 import LeftSide from "../../../components/LeftSideChat/LeftSide";
 import FriendProfile from "../../../components/FriendProfile/FriendProfile";
@@ -36,6 +37,9 @@ function ChatRoom(props) {
 
   const [reload, setReload] = useState(1);
   const [isOnline, setIsOnline] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [userTyping, setUserTyping] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [showNotif, setShowNotif] = useState([false, "", ""]);
@@ -99,6 +103,11 @@ function ChatRoom(props) {
           setShowNotif([false, "", ""]);
         }, 3000);
       });
+
+      props.socket.on("typingMessage", (data) => {
+        setIsTyping(data.isTyping);
+        setUserTyping(data.username);
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.socket]);
@@ -133,32 +142,56 @@ function ChatRoom(props) {
 
   const handleChangeText = (event) => {
     setMessage(event.target.value);
+    props.socket.emit("typingMessage", {
+      username: props.auth.user_name,
+      room: idRoom,
+      isTyping: true,
+    });
+  };
+
+  const handleStopTyping = () => {
+    setTimeout(() => {
+      props.socket.emit("typingMessage", {
+        username: props.auth.user_name,
+        room: idRoom,
+        isTyping: false,
+      });
+    }, 2000);
   };
 
   const handleSendMessage = (event) => {
     event.preventDefault();
-    const setData = {
-      username: props.auth.user_name,
-      room: idRoom,
-      sender_id: senderId,
-      message,
-    };
-    props
-      .addChat({
-        roomChat: idRoom,
-        senderId,
-        receiverId,
-        message: message,
-      })
-      .then((res) => {
-        props.socket.emit("roomMessage", setData);
-        props.socket.emit("notifMessage", {
-          username: props.auth.user_name,
+    if (message) {
+      setIsSending(true);
+      const setData = {
+        username: props.auth.user_name,
+        room: idRoom,
+        sender_id: senderId,
+        message,
+      };
+      props
+        .addChat({
+          roomChat: idRoom,
+          senderId,
           receiverId,
-          message,
+          message: message,
+        })
+        .then((res) => {
+          props.socket.emit("roomMessage", setData);
+          props.socket.emit("notifMessage", {
+            username: props.auth.user_name,
+            receiverId,
+            message,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          setIsSending(false);
         });
-      });
-    setMessage("");
+      setMessage("");
+    }
   };
 
   const scrollToBottom = () => {
@@ -285,6 +318,16 @@ function ChatRoom(props) {
                       );
                     })
                   : ""}
+                {isTyping ? (
+                  <div>
+                    <Spinner animation="grow" size="sm" />
+                    <span className={styles.typing}>
+                      <em>{userTyping} is typing...</em>
+                    </span>
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
               <div>
                 <Form onSubmit={handleSendMessage}>
@@ -294,7 +337,10 @@ function ChatRoom(props) {
                       placeholder="Type your message..."
                       className={styles.input}
                       value={message}
-                      onChange={(event) => handleChangeText(event)}
+                      onChange={(event) => {
+                        handleChangeText(event);
+                        handleStopTyping();
+                      }}
                     />
                     <InputGroup.Text className={styles.suplement}>
                       <PlusLg color="#7E98DF" size={25} />
@@ -306,7 +352,16 @@ function ChatRoom(props) {
                       className={styles.suplement}
                       onClick={handleSendMessage}
                     >
-                      <CursorFill color="#7E98DF" size={25} />
+                      {isSending ? (
+                        <Spinner
+                          animation="border"
+                          variant="primary"
+                          size="sm"
+                          style={{ backgroundColor: "#7E98DF" }}
+                        />
+                      ) : (
+                        <CursorFill color="#7E98DF" size={25} />
+                      )}
                     </InputGroup.Text>
                   </InputGroup>
                 </Form>

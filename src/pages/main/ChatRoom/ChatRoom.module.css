@@ -147,3 +147,8 @@
 .input:focus {
   border-radius: 10px;
 }
+
+.typing {
+  font-size: 13px;
+  padding-left: 5px;
+}
