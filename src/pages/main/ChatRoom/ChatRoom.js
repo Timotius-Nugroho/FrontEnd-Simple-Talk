@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { getUserById } from "../../../redux/action/user";
 import { getAllChat, addChat } from "../../../redux/action/chat";
+import { getRoomChat } from "../../../redux/action/roomChat";
 import {
   Container,
   Row,
@@ -52,6 +53,7 @@ function ChatRoom(props) {
       room: `${props.auth.user_id}`,
       oldRoom: "",
     });
+    console.log("setelah render", props.match.params.id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -71,7 +73,7 @@ function ChatRoom(props) {
     if (props.socket) {
       props.socket.on("chatMessage", () => {
         props
-          .getAllChat(idRoom)
+          .getAllChat(localStorage.getItem("room"))
           .then((res) => {
             setMessages(res.value.data.data);
           })
@@ -99,6 +101,7 @@ function ChatRoom(props) {
       props.socket.on("notifMessage", (data) => {
         // console.log("notif", data);
         setShowNotif([true, data.username, data.message]);
+        props.getRoomChat(senderId);
         setTimeout(() => {
           setShowNotif([false, "", ""]);
         }, 3000);
@@ -126,7 +129,8 @@ function ChatRoom(props) {
   useEffect(() => {
     const username = props.auth.user_name;
     if (idRoom !== idOldRoom) {
-      console.log(`LEAVE ROOM ${idOldRoom}`);
+      console.log(`LEAVE ROOM ${idOldRoom}, join ROOM ${idRoom}`);
+      localStorage.setItem("room", idRoom);
       props.socket.emit("joinRoom", {
         room: idRoom,
         oldRoom: idOldRoom,
@@ -208,6 +212,7 @@ function ChatRoom(props) {
 
   // console.log("messages..", messages);
   // console.log("RECIVERID", receiverId);
+  // console.log("dari luar", idRoom, "live", liveRoom);
 
   return (
     <>
@@ -397,6 +402,7 @@ const mapDispatchToProps = {
   getUserById,
   getAllChat,
   addChat,
+  getRoomChat,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatRoom);
