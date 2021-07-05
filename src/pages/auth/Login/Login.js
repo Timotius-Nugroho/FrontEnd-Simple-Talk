@@ -13,7 +13,8 @@ import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
 import styles from "./Login.module.css";
 import line from "../../../assets/img/line.png";
 import google from "../../../assets/img/googleIcon.png";
-import { login } from "../../../redux/action/auth";
+import { login, logout } from "../../../redux/action/auth";
+import axios from "axios";
 
 function Login(props) {
   const auth = useSelector((state) => state.auth);
@@ -29,10 +30,27 @@ function Login(props) {
       setShowAlert(true);
     }
     if (auth.data.token) {
-      setShowAlert(true);
-      localStorage.setItem("token", auth.data.token);
-      props.history.push("/chat-list");
+      const testingToken = auth.data.token || "";
+      axios
+        .get(
+          `${process.env.REACT_APP_BASE_URL}user/by-id/${auth.data.user_id}`,
+          {
+            headers: {
+              Authorization: "Bearer " + testingToken,
+            },
+          }
+        )
+        .then((res) => {
+          setShowAlert(true);
+          localStorage.setItem("token", auth.data.token);
+          props.history.push("/chat-list");
+        })
+        .catch((err) => {
+          setShowAlert(false);
+          dispatch(logout(auth.data.user_id));
+        });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, props]);
 
   const handleLogin = (event) => {
