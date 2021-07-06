@@ -26,7 +26,7 @@ Simple talk is a chat application that can connect everyone in the world very ea
 
 ## Getting Started
 
-1. Download this Project or you can type `git clone #link_git`
+1. Download this Project or you can type `git clone https://github.com/Timotius-Nugroho/FrontEnd-Simple-Talk`
 2. Open app's directory in CMD or Terminal
 3. Type `npm install` or `yarn install`
 4. Add .env file at root folder project
