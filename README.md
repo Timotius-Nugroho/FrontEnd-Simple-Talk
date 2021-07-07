@@ -2,7 +2,7 @@
   <p align="center">
     <a href="https://simple-talk.netlify.app">View Demo</a>
     ·
-    <a href="https://github.com/Timotius-NugrohoFrontEnd-Simple-Talk/issues">Report Bug</a>
+    <a href="https://github.com/Timotius-Nugroho/FrontEnd-Simple-Talk/issues">Report Bug</a>
     ·
     <a href="https://github.com/Timotius-Nugroho/FrontEnd-Simple-Talk/pulls">Request Feature</a>
   </p>
