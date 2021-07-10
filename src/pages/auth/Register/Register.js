@@ -9,6 +9,7 @@ import {
   Card,
   Image,
   Alert,
+  Spinner,
 } from "react-bootstrap";
 import { EyeFill, EyeSlashFill, CaretLeft } from "react-bootstrap-icons";
 import styles from "./Register.module.css";
@@ -24,6 +25,7 @@ function Register(props) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (auth.msg.length > 0) {
@@ -33,6 +35,7 @@ function Register(props) {
 
   const handleRegister = (event) => {
     event.preventDefault();
+    setIsLoading(true);
     dispatch(
       register({
         userName: username,
@@ -41,6 +44,7 @@ function Register(props) {
       })
     );
     setTimeout(() => {
+      setIsLoading(false);
       localStorage.clear();
       window.location.href = "/";
     }, 2000);
@@ -141,7 +145,11 @@ function Register(props) {
                 variant="primary"
                 type="submit"
               >
-                Register
+                {isLoading ? (
+                  <Spinner animation="border" variant="primary" size="sm" />
+                ) : (
+                  "Register"
+                )}
               </Button>
               <div className="d-flex flex-row mb-4 justify-content-between">
                 <Image className={styles.line} src={line} />
@@ -152,6 +160,7 @@ function Register(props) {
                 className={`${styles.btnGoolge} mb-4`}
                 variant="outline-primary"
                 type="button"
+                disabled
               >
                 <Image src={google} />
                 <span> Google</span>

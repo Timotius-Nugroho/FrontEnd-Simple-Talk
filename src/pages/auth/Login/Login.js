@@ -8,6 +8,7 @@ import {
   Card,
   Image,
   Alert,
+  Spinner,
 } from "react-bootstrap";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
 import styles from "./Login.module.css";
@@ -24,6 +25,7 @@ function Login(props) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (auth.msg.length > 0) {
@@ -53,14 +55,16 @@ function Login(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, props]);
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
-    dispatch(
+    setIsLoading(true);
+    await dispatch(
       login({
         userEmail: email,
         userPassword: password,
       })
     );
+    setIsLoading(false);
   };
 
   const handleShowPassword = () => {
@@ -141,7 +145,11 @@ function Login(props) {
                 variant="primary"
                 type="submit"
               >
-                Login
+                {isLoading ? (
+                  <Spinner animation="border" variant="primary" size="sm" />
+                ) : (
+                  "Login"
+                )}
               </Button>
               <div className="d-flex flex-row mb-4 justify-content-between">
                 <Image className={styles.line} src={line} />
@@ -152,6 +160,7 @@ function Login(props) {
                 className={`${styles.btnGoolge} mb-5`}
                 variant="outline-primary"
                 type="button"
+                disabled
               >
                 <Image src={google} />
                 <span> Google</span>

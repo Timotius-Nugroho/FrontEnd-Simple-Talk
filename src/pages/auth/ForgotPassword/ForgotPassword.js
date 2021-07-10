@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { connect } from "react-redux";
 import { forgotPassword } from "../../../redux/action/auth";
-import { Button, Container, Form, Card, Alert } from "react-bootstrap";
+import { Button, Container, Form, Card, Alert, Spinner } from "react-bootstrap";
 import { CaretLeft } from "react-bootstrap-icons";
 import styles from "./ForgotPassword.module.css";
 
@@ -17,8 +17,10 @@ function ForgetPassword(props) {
   ]);
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleForgot = (event) => {
+    setIsLoading(true);
     event.preventDefault();
     if (isRequestSetPassword[0]) {
       if (newPassword === confirmNewPassword) {
@@ -26,18 +28,21 @@ function ForgetPassword(props) {
           .forgotPassword({ userEmail: email, userPassword: newPassword })
           .then((res) => {
             setAlertMsg([true, res.value.data.msg]);
+            setIsLoading(false);
             setTimeout(() => {
               props.history.push("/");
-            }, 1000);
+            }, 2000);
           })
           .catch((err) => {
             setAlertMsg([true, err.response.data.msg]);
+            setIsLoading(false);
             setTimeout(() => {
               setAlertMsg([false, ""]);
             }, 2000);
           });
       } else {
         setAlertMsg([true, "Passwords are not the same"]);
+        setIsLoading(false);
         setTimeout(() => {
           setAlertMsg([false, ""]);
         }, 2000);
@@ -47,6 +52,7 @@ function ForgetPassword(props) {
         .forgotPassword({ userEmail: email })
         .then((res) => {
           setAlertMsg([true, res.value.data.msg]);
+          setIsLoading(false);
           setTimeout(() => {
             setAlertMsg([false, ""]);
             setCardMsg("You’ll get messages soon on your e-mail ");
@@ -55,6 +61,7 @@ function ForgetPassword(props) {
         })
         .catch((err) => {
           setAlertMsg([true, err.response.data.msg]);
+          setIsLoading(false);
           setTimeout(() => {
             setAlertMsg([false, ""]);
           }, 2000);
@@ -137,7 +144,11 @@ function ForgetPassword(props) {
                 variant="primary"
                 type="submit"
               >
-                {isRequestSetPassword[1]}
+                {isLoading ? (
+                  <Spinner animation="border" variant="primary" size="sm" />
+                ) : (
+                  isRequestSetPassword[1]
+                )}
               </Button>
               {alertMsg[0] ? (
                 <Alert variant="warning" className="text-center">
