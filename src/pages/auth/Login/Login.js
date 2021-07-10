@@ -55,16 +55,22 @@ function Login(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, props]);
 
-  const handleLogin = async (event) => {
+  useEffect(() => {
+    if (auth.msg.length > 0) {
+      setIsLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth.msg]);
+
+  const handleLogin = (event) => {
     event.preventDefault();
     setIsLoading(true);
-    await dispatch(
+    dispatch(
       login({
         userEmail: email,
         userPassword: password,
       })
     );
-    setIsLoading(false);
   };
 
   const handleShowPassword = () => {
